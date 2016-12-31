@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DMTGenerator
 {
-    public enum Method
+    public enum Function
     {
-        SimplexTable,
-        Graphic
+        Min,
+        Max
     };
 }
