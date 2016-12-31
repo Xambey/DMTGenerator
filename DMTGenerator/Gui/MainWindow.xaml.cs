@@ -26,5 +26,6 @@ namespace DMTGenerator
             InitializeComponent();
             this.WindowState = WindowState.Maximized;
         }
+        
     }
 }
