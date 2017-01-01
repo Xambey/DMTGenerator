@@ -5,8 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMTGenerator"
         mc:Ignorable="d"
-        Title="DMTGenerator" Height="700" Width="900" Background="#FF303034" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="DMTGenerator" Height="257.001" Width="459" Background="#FF303034" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="671" Margin="207,0,0,-0.333" TextWrapping="Wrap" VerticalAlignment="Top" Width="686" Background="#FF303434" FontSize="18.667"/>
+        <Menu x:Name="menu" RenderTransformOrigin="0.496,0.295" Margin="0,-5,-0.667,205.333" Background="#FF303434" FontSize="16" Foreground="#FF00971B" OpacityMask="Black">
+            <MenuItem Header="Файл" OpacityMask="Black">
+                <MenuItem Header="Новый" FontSize="12"></MenuItem>
+                <MenuItem Header="Открыть" FontSize="12"></MenuItem>
+                <MenuItem Header="Сохранить" FontSize="12"></MenuItem>
+                <MenuItem Header="Сохранить как..." FontSize="12"></MenuItem>
+                <Separator></Separator>
+                <MenuItem Header="Выход" Click="MenuItem_Click" FontSize="12"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Редактировать" OpacityMask="Black">
+                <MenuItem Header="Cut" FontSize="12"></MenuItem>
+                <MenuItem Header="Copy" FontSize="12"></MenuItem>
+                <MenuItem Header="Paste" FontSize="12"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="200" Margin="0,25,-0.667,0" VerticalAlignment="Top" Width="454" Background="#FF303434" BorderBrush="#FF303434" IsSynchronizedWithCurrentItem="False" OpacityMask="Black" FontSize="18.667">
+            <TabItem x:Name="Generator"  Header="Генератор" ForceCursor="True" FontSize="18.667" Margin="-2,-2,-2,4.333" Background="#FF303434" BorderBrush="#FF303434" OpacityMask="Black">
+                <Grid Background="#FF303434" Margin="0,4,-3,-5.667" OpacityMask="Black">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="195*"/>
+                        <ColumnDefinition Width="256*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel HorizontalAlignment="Left" Height="63" Margin="40,57,0,0" VerticalAlignment="Top" Width="226" OpacityMask="Black" Grid.ColumnSpan="2">
+                        <CheckBox x:Name="checkBox" Content="Симплекс таблица" Foreground="#FF09B31D" FontSize="16" OpacityMask="Black"/>
+                        <CheckBox x:Name="checkBox_Copy" Content="Графический метод" Foreground="#FF09B31D" FontSize="16" OpacityMask="Black"/>
+                    </StackPanel>
+                    <Label x:Name="label" Content="Выберите типы задач(методы)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="#FFE1C700" FontSize="16" Grid.ColumnSpan="2" OpacityMask="Black" Height="31" Width="233"/>
+                    <Label x:Name="label2" Content="Введите количество билетов" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Foreground="#FFFFC700" FontSize="16" OpacityMask="Black" Height="31" Width="222" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="textBox" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Height="26" Margin="16,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" Background="#FF96BF00" FontSize="21.333" Text="1" GotFocus="textBox_GotFocus" OpacityMask="Black" Grid.ColumnSpan="2"/>
+                    <Button x:Name="button" Content="Сгенерировать билеты" HorizontalAlignment="Left" Margin="34.333,125,0,0" VerticalAlignment="Top" Width="203" Background="#FFB2A709" Height="26" Grid.Column="1" Click="button_Click"/>
+                    <Label x:Name="label_Copy" Content="" HorizontalAlignment="Left" Margin="10,159,0,-26" VerticalAlignment="Top" Foreground="#FFFFC700" FontSize="16" OpacityMask="Black" Height="31" Width="10"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Decision" Header="Решить" FontSize="18.667" Margin="2,-2,-6,4.333" Background="#FF303434" BorderBrush="#FF303434" OpacityMask="Black">
+                <Grid Background="#FF303434"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
