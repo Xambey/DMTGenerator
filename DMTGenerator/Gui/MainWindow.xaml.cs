@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using Microsoft.Office.Interop.Word;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace DMTGenerator
 {
@@ -21,13 +23,17 @@ namespace DMTGenerator
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         private StringBuilder buffer;
-        
+        private Word.Find findobject;
+        private Word.Range rng;
+
         public MainWindow()
         {
             InitializeComponent();
+            checkBox.IsEnabled = false;
+            checkBox_Copy.IsEnabled = false;
         }
 
         private void GenerateTickets(int count)
@@ -37,7 +43,7 @@ namespace DMTGenerator
             dialog.Filter = "Документ word(*.doc;*docx)|.doc;*.docx";
             dialog.CheckFileExists = true;
             dialog.OverwritePrompt = true;
-
+            
             if (dialog.ShowDialog() == true) {
                 textBox.Text = dialog.FileName;
             }
@@ -46,17 +52,35 @@ namespace DMTGenerator
                 MessageBox.Show("Не удалось выбрать место и название файла для сохранения!");
                 return;
             }
-             
+
+            //проверка существования шаблона
+            stream = File.OpenRead("../Resources/template_word.docx");
+
+            if (stream == null)
+            {
+                MessageBox.Show("Файл шаблона template_word.docx не найден!");
+                return;
+            }
+            else
+            {
+                using (StreamWriter nstream = new System.IO.StreamWriter(dialog.FileName, false))
+                {
+                    nstream.WriteLine("");
+                    nstream.Close();
+                }
+            }
+            stream.Close();
+
             while (count != 0)
             {
                 Random r = new Random();
                 List<List<double>> table = new List<List<double>>()
                 {
-                     new List<double>() {(int)r.Next(-15,40), (int)r.Next(-15, 40), (int)r.Next(-15,40)},
-                     new List<double>() { (int)r.Next(-15, 40), (int)r.Next(-15, 40), (int)r.Next(-15,40)},
-                     new List<double>() { (int)r.Next(-15, 40), (int)r.Next(-15, 40), (int)r.Next(-15,40)},
-                     new List<double>() { (int)r.Next(-15, 40), (int)r.Next(-15, 40), (int)r.Next(-15,40)},
-                     new List<double>() { 0, (int)r.Next(-15, 40), (int)r.Next(-15, 40) }
+                     new List<double>() {(int)r.Next(-15,15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
+                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
+                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
+                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
+                     new List<double>() { 0, (int)r.Next(-15, 15), (int)r.Next(-15, 15) }
                 };
 
                 List<double> result = new List<double>();
@@ -93,8 +117,6 @@ namespace DMTGenerator
                         return;
                 }
 
-
-
                 //Console.OutputEncoding = Encoding.Default;
                 //Console.WriteLine("Решенная симплекс-таблица:");
 
@@ -113,26 +135,58 @@ namespace DMTGenerator
                 //Console.WriteLine("X[1] = " + result[0]);
                 //Console.WriteLine("X[2] = " + result[1]);
                 //Console.ReadLine(); 
+                
 
-                string str = "";
+                Word.Application word = new Microsoft.Office.Interop.Word.Application();
+                Word.Document document = word.Documents.Open("../Resources/template_word.docx");
 
-                str += "\t\t\t Задача №" + count.ToString() + "\n"; 
+                if(document == null)
+                {
+                    MessageBox.Show("Файл шаблона template_word.docx не найден!");
+                    return;
+                }
+
+                word.Application.Visible = false;
+
+               // findobject = word.Application.Selection.Find;
+                rng = document.Content;
 
                 count--;
             }
-
-            if((stream = dialog.OpenFile()) == null)
-            {
-                MessageBox.Show("Файл не был создан!");
-                return;
-            }
-
-
-
-            stream.Close();
         }
 
-        
+        private void SearchReplace(int index, string text, string ntext)
+        {
+            //findobject.ClearFormatting();
+            //findobject.Text = text;
+            //findobject.Replacement.ClearFormatting();
+            //findobject.Replacement.Text = ntext;
+
+            //var replace = Word.WdReplace.wdReplaceOne;
+            //findobject.Execute(Replace: replace);
+
+            rng.Find.ClearFormatting();
+            rng.Find.Forward = true;
+            rng.Find.Text = text;
+
+            rng.Find.Replacement.ClearFormatting();
+            rng.Find.Replacement.Text = ntext;
+
+            object replace = Word.WdReplace.wdReplaceOne;
+
+            int i = 0;
+
+            rng.Find.Execute();
+
+            while(rng.Find.Found)
+            {
+                if (index == i)
+                    rng.Find.Execute(Replace: replace);
+                i++;
+                rng.Find.Execute();
+            }
+        }
+
 
         private void textBox_GotFocus(object sender, RoutedEventArgs e)
         {
