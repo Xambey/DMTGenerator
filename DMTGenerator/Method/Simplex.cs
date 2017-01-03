@@ -53,7 +53,6 @@ namespace DMTGenerator
         public List<List<double>> Calculate(ref List<double> result)
         {
             int mainCol, mainRow; //ведущие столбец и строка
-
             while (!IsItEnd())
             {
                 mainCol = findMainCol();

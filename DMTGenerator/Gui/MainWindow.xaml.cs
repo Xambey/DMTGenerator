@@ -14,8 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
-using Microsoft.Office.Interop.Word;
-using Word = Microsoft.Office.Interop.Word;
+using Novacode;
 
 namespace DMTGenerator
 {
@@ -26,8 +25,8 @@ namespace DMTGenerator
     public partial class MainWindow : System.Windows.Window
     {
         private StringBuilder buffer;
-        private Word.Find findobject;
-        private Word.Range rng;
+
+        private string template_wname = @"..\..\Resources\template_word.docx";
 
         public MainWindow()
         {
@@ -38,10 +37,8 @@ namespace DMTGenerator
 
         private void GenerateTickets(int count)
         {
-            Stream stream;
             SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Документ word(*.doc;*docx)|.doc;*.docx";
-            dialog.CheckFileExists = true;
+            dialog.Filter = "Документ word(*docx)|*.docx";
             dialog.OverwritePrompt = true;
             
             if (dialog.ShowDialog() == true) {
@@ -54,34 +51,28 @@ namespace DMTGenerator
             }
 
             //проверка существования шаблона
-            stream = File.OpenRead("../Resources/template_word.docx");
-
-            if (stream == null)
-            {
+            if(!File.Exists(template_wname))
+            { 
                 MessageBox.Show("Файл шаблона template_word.docx не найден!");
                 return;
             }
-            else
-            {
-                using (StreamWriter nstream = new System.IO.StreamWriter(dialog.FileName, false))
-                {
-                    nstream.WriteLine("");
-                    nstream.Close();
-                }
-            }
-            stream.Close();
 
-            while (count != 0)
+            var doc_output = DocX.Create(dialog.FileName);
+
+            int c = 1;
+
+            Random r = new Random();
+            while (c <= count)
             {
-                Random r = new Random();
                 List<List<double>> table = new List<List<double>>()
                 {
-                     new List<double>() {(int)r.Next(-15,15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
-                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
-                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
-                     new List<double>() { (int)r.Next(-15, 15), (int)r.Next(-15, 15), (int)r.Next(-15, 15) },
-                     new List<double>() { 0, (int)r.Next(-15, 15), (int)r.Next(-15, 15) }
+                     new List<double>() {r.Next(-15,15), r.Next(-15, 15), r.Next(-15, 15) },
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
+                     new List<double>() { 0, r.Next(-15, 15), r.Next(-15, 15) }
                 };
+
 
                 List<double> result = new List<double>();
                 for (int i = 0; i < table[i].Count - 1; i++)
@@ -89,7 +80,7 @@ namespace DMTGenerator
 
                 List<List<double>> table_result = new List<List<double>>();
 
-                Function f = r.Next(1)  == 1 ? Function.Max : Function.Min;
+                Function f = r.Next(10) % 1 == 0 ? Function.Max : Function.Min;
 
                 Simplex S = new Simplex(table, f);
                 table_result = S.Calculate(ref result);
@@ -117,74 +108,50 @@ namespace DMTGenerator
                         return;
                 }
 
-                //Console.OutputEncoding = Encoding.Default;
-                //Console.WriteLine("Решенная симплекс-таблица:");
+                if (table[4][1] != (int)table[4][1] || table[4][2] != (int)table[4][2])
+                    continue;
 
-                //foreach (List<double> item in table_result)
-                //{
-                //    foreach (var t in item)
-                //    {
-                //        Console.Write(t);
-                //        Console.Write(" ");
-                //    }
-                //    Console.WriteLine();
-                //}
+                string sign = f == Function.Max ? ">=" : "<=";
 
-                //Console.WriteLine();
-                //Console.WriteLine("Решение:");
-                //Console.WriteLine("X[1] = " + result[0]);
-                //Console.WriteLine("X[2] = " + result[1]);
-                //Console.ReadLine(); 
-                
-
-                Word.Application word = new Microsoft.Office.Interop.Word.Application();
-                Word.Document document = word.Documents.Open("../Resources/template_word.docx");
-
-                if(document == null)
-                {
-                    MessageBox.Show("Файл шаблона template_word.docx не найден!");
-                    return;
-                }
-
-                word.Application.Visible = false;
-
-               // findobject = word.Application.Selection.Find;
-                rng = document.Content;
+                doc_output.InsertParagraph("Билет №" + count.ToString())
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14)
+                    .Alignment = Alignment.center;
+                doc_output.InsertParagraph("Решить симплексным методом, с использованием симплексной таблицы при следующих условиях: ")
+                    .SpacingAfter(0)
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(string.Format(" {0}x1+({1}x2) <= {2}", table[0][1], table[0][2], table[0][0]))
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(string.Format(" {0}x1+({1}x2) <= {2}", table[1][1], table[1][2], table[1][0]))
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(string.Format(" {0}x1+({1}x2) <= {2}", table[2][1], table[2][2], table[2][0]))
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(string.Format(" {0}x1+({1}x2) <= {2}", table[3][1], table[3][2], table[3][0]))
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(" x1x2 " + sign + " 0")
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph(string.Format("F(x1,x2) = {0}x1 + ({1}x2) -> {2}", table[4][1], table[4][2], sign == ">=" ? "max" : "min"))
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+                doc_output.InsertParagraph()
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
 
                 count--;
             }
+
+            doc_output.Save();
         }
 
         private void SearchReplace(int index, string text, string ntext)
         {
-            //findobject.ClearFormatting();
-            //findobject.Text = text;
-            //findobject.Replacement.ClearFormatting();
-            //findobject.Replacement.Text = ntext;
-
-            //var replace = Word.WdReplace.wdReplaceOne;
-            //findobject.Execute(Replace: replace);
-
-            rng.Find.ClearFormatting();
-            rng.Find.Forward = true;
-            rng.Find.Text = text;
-
-            rng.Find.Replacement.ClearFormatting();
-            rng.Find.Replacement.Text = ntext;
-
-            object replace = Word.WdReplace.wdReplaceOne;
-
-            int i = 0;
-
-            rng.Find.Execute();
-
-            while(rng.Find.Found)
-            {
-                if (index == i)
-                    rng.Find.Execute(Replace: replace);
-                i++;
-                rng.Find.Execute();
-            }
+            
         }
 
 
