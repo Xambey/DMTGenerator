@@ -15,18 +15,25 @@ using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
 using Novacode;
+using System.Net.Mail;
+using System.Net;
 
 namespace DMTGenerator
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
+    ///Примечание.
+    ///Просьба убрать от экрана беременных детей и маленьких женщин, это тот еще говнокод
+    ///Будьте осторожны!
     /// </summary>
+
 
     public partial class MainWindow : System.Windows.Window
     {
-        private StringBuilder buffer;
-
-        private string template_wname = @"..\..\Resources\template_word.docx";
+        private string answername;
+        private DocX doc_output;
+        private DocX doc_answer;
+        SaveFileDialog dialog;
 
         public MainWindow()
         {
@@ -35,13 +42,38 @@ namespace DMTGenerator
             checkBox_Copy.IsEnabled = false;
         }
 
+        private bool? isPositive(double x)
+        {
+            if (x > 0)
+                return true;
+            else if (x < 0)
+                return false;
+            else
+                return null;
+        }
+
+
+        private void changeSign(ref List<List<double>> list)
+        {
+            for (int i = 1; i < list[0].Count; i++)
+            {
+                list[list.Count - 1][i] *= -1;
+            }
+        }
+
+        private string getSign(int value)
+        {
+            return value > 0 ? "<=" : ">=";
+        }
+
         private void GenerateTickets(int count)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            dialog = new SaveFileDialog();
             dialog.Filter = "Документ word(*docx)|*.docx";
             dialog.OverwritePrompt = true;
-            
-            if (dialog.ShowDialog() == true) {
+
+            if (dialog.ShowDialog() == true)
+            {
                 textBox.Text = dialog.FileName;
             }
             else
@@ -50,68 +82,108 @@ namespace DMTGenerator
                 return;
             }
 
-            //проверка существования шаблона
-            if(!File.Exists(template_wname))
-            { 
-                MessageBox.Show("Файл шаблона template_word.docx не найден!");
-                return;
-            }
-
-            var doc_output = DocX.Create(dialog.FileName);
+            answername = dialog.FileName;
+            int size = answername.Count() - 5;
+            answername = answername.Remove(size);
+            size = answername.Count();
+            answername += "_answers.docx";
+            doc_output = DocX.Create(dialog.FileName);
+            doc_answer = DocX.Create(answername);
 
             int c = 1;
 
             Random r = new Random();
+
             while (c <= count)
             {
+
+                bool flag = true;
+                bool nnull = true;
+                int _c = 0;
+
+
+                //Проверка: в канонической ли форме задача?
+                List<int> signs = new List<int>();
+                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
+                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
+                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
+                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
+
                 List<List<double>> table = new List<List<double>>()
                 {
-                     new List<double>() {r.Next(-15,15), r.Next(-15, 15), r.Next(-15, 15) },
-                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
-                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
-                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15) },
-                     new List<double>() { 0, r.Next(-15, 15), r.Next(-15, 15) }
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15)},
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15)},
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15)},
+                     new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15)},
+                     new List<double>() { 0, r.Next(-15, 15), r.Next(-15, 15)}
                 };
 
-
                 List<double> result = new List<double>();
-                for (int i = 0; i < table[i].Count - 1; i++)
+                for (int i = 0; i < table[0].Count - 1; i++)
                     result.Add(new double());
 
                 List<List<double>> table_result = new List<List<double>>();
 
-                Function f = r.Next(10) % 1 == 0 ? Function.Max : Function.Min;
+                Function f = r.Next(10) % 2 == 0 ? Function.Max : Function.Min;
+
+                Function fr = f;
+                int f1 = (int)table[4][1];
+                int f2 = (int)table[4][2];
+
+                changeSign(ref table);
+
+                for (int i = 0; i < table.Count; i++)
+                {
+                    for (int k = 0; k < table[i].Count; k++)
+                    {
+                        if (k == 0)
+                        {
+                            if (table[i][k] < 0)
+                            {
+                                flag = false;
+                                continue;
+                            }
+                        }
+                        else {
+                            if (table[i][k] < 0)
+                            {
+                                _c++;
+
+                            }
+                            else if (table[i][k] > 0)
+                            {
+                                if (!nnull)
+                                    nnull = true;
+                            }
+                            else
+                            {
+                                nnull = false;
+                            }
+
+                        }
+
+                        if (_c == 2)
+                            flag = false;
+                    }
+                    if (!nnull)
+                        break;
+                    _c = 0;
+                }
+
+                if (!flag || !nnull)
+                    continue;
 
                 Simplex S = new Simplex(table, f);
                 table_result = S.Calculate(ref result);
 
-                double func = 0;
-                int j = 0;
-                for (int i = 1; i < table[i].Count; i++, j++)
-                {
-                    func += result[j] * table[table.Count - 1][i];
-                }
-
-
-                switch (f)
-                {
-                    case Function.Min:
-                        if (!(func <= 0))
-                            continue;
-                        break;
-                    case Function.Max:
-                        if (!(func >= 0))
-                            continue;
-                        break;
-                    default:
-                        MessageBox.Show("Стремление функции неизвестно!");
-                        return;
-                }
-
-                if (table[4][1] != (int)table[4][1] || table[4][2] != (int)table[4][2])
+                if (table_result == null)
                     continue;
 
-                string sign = f == Function.Max ? ">=" : "<=";
+                if (result[0] != (int)result[0] || result[1] != (int)result[1] || result[0] == 0 || result[1] == 0)
+                    continue;
+
+
+                string sign = fr == Function.Max ? ">=" : "<=";
 
                 doc_output.InsertParagraph("Билет №" + count.ToString())
                     .Font(new System.Drawing.FontFamily("Calibri"))
@@ -133,13 +205,17 @@ namespace DMTGenerator
                 doc_output.InsertParagraph(string.Format(" {0}x1+({1}x2) <= {2}", table[3][1], table[3][2], table[3][0]))
                     .Font(new System.Drawing.FontFamily("Calibri"))
                     .FontSize(14);
-                doc_output.InsertParagraph(" x1x2 " + sign + " 0")
+                doc_output.InsertParagraph(" x1x2 " + ">="/*sign*/ + " 0")
                     .Font(new System.Drawing.FontFamily("Calibri"))
                     .FontSize(14);
-                doc_output.InsertParagraph(string.Format("F(x1,x2) = {0}x1 + ({1}x2) -> {2}", table[4][1], table[4][2], sign == ">=" ? "max" : "min"))
+                doc_output.InsertParagraph(string.Format("F(x1,x2) = {0}x1 + ({1}x2) -> {2}", f1, f2, sign == ">=" ? "max" : "min"))
                     .Font(new System.Drawing.FontFamily("Calibri"))
                     .FontSize(14);
                 doc_output.InsertParagraph()
+                    .Font(new System.Drawing.FontFamily("Calibri"))
+                    .FontSize(14);
+
+                doc_answer.InsertParagraph(string.Format("Билет № {2} x1 = {0}, x2 = {1}", result[0], result[1], count))
                     .Font(new System.Drawing.FontFamily("Calibri"))
                     .FontSize(14);
 
@@ -147,6 +223,33 @@ namespace DMTGenerator
             }
 
             doc_output.Save();
+            doc_answer.Save();
+            send();
+        }
+
+        private void send()
+        {
+            string output = doc_output.Text;
+            string answer = doc_answer.Text;
+
+            MailMessage Message = new MailMessage();
+            Message.From = new MailAddress("andrey28041997@gmail.com");
+            Message.To.Add(new MailAddress("Xambey@yandex.ru"));
+            Message.Subject = "ТПР билеты и ответы";
+            Message.Body = "ответы подъехали";
+            Message.Attachments.Add(new Attachment(dialog.FileName));
+            Message.Attachments.Add(new Attachment(answername));
+
+            SmtpClient Smtp = new SmtpClient();
+            Smtp.Host = "smtp.gmail.com";
+            Smtp.EnableSsl = true;
+            Smtp.Port = 587;
+            Smtp.Credentials = new NetworkCredential(("andrey28041997@gmail.com").Split('@')[0], "89165643020a");
+            //Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+            
+
+            Smtp.Send(Message);
+            Message.Dispose();
         }
 
         private void SearchReplace(int index, string text, string ntext)

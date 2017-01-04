@@ -17,8 +17,6 @@ namespace DMTGenerator
  
         public Simplex(List<List<double>> source, Function func)
         {
-            if (func == Function.Max)
-                Min(ref source);
 
             m = source.Count; //высота
             n = source[0].Count; //ширина
@@ -52,9 +50,12 @@ namespace DMTGenerator
         //result - в этот массив будут записаны полученные значения X
         public List<List<double>> Calculate(ref List<double> result)
         {
+            int count = 0;
             int mainCol, mainRow; //ведущие столбец и строка
             while (!IsItEnd())
             {
+                if (count > 100)
+                    return null;
                 mainCol = findMainCol();
                 mainRow = findMainRow(mainCol);
                 basis[mainRow] = mainCol;
@@ -85,6 +86,7 @@ namespace DMTGenerator
                         new_table[i][j] = table[i][j] - table[i][mainCol] * new_table[mainRow][j];
                 }
                 table = new_table;
+                count++;
             }
 
             //заносим в result найденные значения X
@@ -116,14 +118,6 @@ namespace DMTGenerator
             }
  
             return flag;
-        }
-
-        private void Min(ref List<List<double>> list)
-        {
-            for(int i = 1; i < list[0].Count; i++)
-            {
-                list[list.Count - 1][i] *= -1;
-            }
         }
  
         private int findMainCol()

@@ -38,6 +38,7 @@
                     <TextBox x:Name="textBox" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Height="26" Margin="16,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" Background="#FF96BF00" FontSize="21.333" Text="1" GotFocus="textBox_GotFocus" OpacityMask="Black" Grid.ColumnSpan="2"/>
                     <Button x:Name="button" Content="Сгенерировать билеты" HorizontalAlignment="Left" Margin="34.333,125,0,0" VerticalAlignment="Top" Width="203" Background="#FFB2A709" Height="26" Grid.Column="1" Click="button_Click"/>
                     <Label x:Name="label_Copy" Content="" HorizontalAlignment="Left" Margin="10,159,0,-26" VerticalAlignment="Top" Foreground="#FFFFC700" FontSize="16" OpacityMask="Black" Height="31" Width="10"/>
+                    <Label x:Name="label1" Grid.ColumnSpan="2" Content="Не доступно в Альфа версии" HorizontalAlignment="Left" Height="74" Margin="16,23,0,0" VerticalAlignment="Top" Width="269" Foreground="#FFD34B4B"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="Decision" Header="Решить" FontSize="18.667" Margin="2,-2,-6,4.333" Background="#FF303434" BorderBrush="#FF303434" OpacityMask="Black">
