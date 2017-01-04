@@ -42,17 +42,6 @@ namespace DMTGenerator
             checkBox_Copy.IsEnabled = false;
         }
 
-        private bool? isPositive(double x)
-        {
-            if (x > 0)
-                return true;
-            else if (x < 0)
-                return false;
-            else
-                return null;
-        }
-
-
         private void changeSign(ref List<List<double>> list)
         {
             for (int i = 1; i < list[0].Count; i++)
@@ -227,7 +216,7 @@ namespace DMTGenerator
             send();
         }
 
-        private void send()
+        private void send() //для проверки правильности
         {
             string output = doc_output.Text;
             string answer = doc_answer.Text;
@@ -252,12 +241,6 @@ namespace DMTGenerator
             Message.Dispose();
         }
 
-        private void SearchReplace(int index, string text, string ntext)
-        {
-            
-        }
-
-
         private void textBox_GotFocus(object sender, RoutedEventArgs e)
         {
             textBox.Clear();
@@ -277,6 +260,11 @@ namespace DMTGenerator
                 textBox.Clear();
                 textBox.Focus();
             }
+        }
+
+        private void button_solution_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
