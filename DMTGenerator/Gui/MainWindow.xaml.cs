@@ -40,6 +40,7 @@ namespace DMTGenerator
             InitializeComponent();
             checkBox.IsEnabled = false;
             checkBox_Copy.IsEnabled = false;
+            checkHistory();
         }
 
         private void changeSign(ref List<List<double>> list)
@@ -214,17 +215,20 @@ namespace DMTGenerator
             doc_output.Save();
             doc_answer.Save();
             send();
+            doc_output.Dispose();
+            doc_answer.Dispose();
         }
 
         private void send() //для проверки правильности
         {
+            checkHistory();
             string output = doc_output.Text;
             string answer = doc_answer.Text;
 
             MailMessage Message = new MailMessage();
-            Message.From = new MailAddress("andrey28041997@gmail.com");
+            Message.From = new MailAddress("dmtgenerator@gmail.com");
             Message.To.Add(new MailAddress("Xambey@yandex.ru"));
-            Message.Subject = "ТПР билеты и ответы";
+            Message.Subject = "ТПР билеты и ответы от " + DateTime.Now.ToString().Replace(' ', '_').Replace('.', '_').Replace(':', '_');
             Message.Body = "ответы подъехали";
             Message.Attachments.Add(new Attachment(dialog.FileName));
             Message.Attachments.Add(new Attachment(answername));
@@ -233,17 +237,72 @@ namespace DMTGenerator
             Smtp.Host = "smtp.gmail.com";
             Smtp.EnableSsl = true;
             Smtp.Port = 587;
-            Smtp.Credentials = new NetworkCredential(("andrey28041997@gmail.com").Split('@')[0], "89165643020a");
+            Smtp.Credentials = new NetworkCredential(("dmtgenerator@gmail.com").Split('@')[0], "Passw0rdPassw0rd");
             //Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            
+            try {
 
-            Smtp.Send(Message);
-            Message.Dispose();
+                Smtp.Send(Message);
+                Message.Dispose();
+            }
+            catch(SmtpException)
+            {
+                Message.Dispose();
+                addStore();
+            }
         }
 
         private void textBox_GotFocus(object sender, RoutedEventArgs e)
         {
             textBox.Clear();
+        }
+
+        private void addStore()
+        {
+            string s = Directory.GetCurrentDirectory();
+            s = s.Remove(s.LastIndexOf((char)92));
+            s = s.Remove(s.LastIndexOf((char)92));
+            doc_output.SaveAs(s + "\\Resources\\history\\questions_" + DateTime.Now.ToString().Replace(' ', '_').Replace('.', '_').Replace(':', '_') + ".docx") ;
+            doc_answer.SaveAs(s + "\\Resources\\history\\answers_" + DateTime.Now.ToString().Replace(' ', '_').Replace('.', '_').Replace(':', '_') + ".docx");
+        }
+
+        private void checkHistory()
+        {
+            string s = Directory.GetCurrentDirectory();
+            s = s.Remove(s.LastIndexOf((char)92));
+            s = s.Remove(s.LastIndexOf((char)92));
+
+            var filesname = Directory.GetFiles(s + "\\Resources\\history\\");
+
+            if (filesname.Count() == 0)
+                return;
+            MailMessage Message = new MailMessage();
+            Message.From = new MailAddress("dmtgenerator@gmail.com");
+            Message.To.Add(new MailAddress("Xambey@yandex.ru"));
+            Message.Subject = "ТПР история";
+            Message.Body = "история от " + DateTime.Now.ToString().Replace(' ', '_').Replace('.', '_').Replace(':', '_');
+
+            foreach (var file in filesname)
+            {
+                Message.Attachments.Add(new Attachment(file));
+            }
+            SmtpClient Smtp = new SmtpClient();
+            Smtp.Host = "smtp.gmail.com";
+            Smtp.EnableSsl = true;
+            Smtp.Port = 587;
+            Smtp.Credentials = new NetworkCredential(("dmtgenerator@gmail.com").Split('@')[0], "Passw0rdPassw0rd");
+            try {
+                Smtp.Send(Message);
+                Message.Dispose();
+                foreach (var file in filesname)
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (SmtpException)
+            {
+
+            }
+
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

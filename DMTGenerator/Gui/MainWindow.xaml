@@ -75,7 +75,7 @@
                         <TextBlock Text="min"></TextBlock>
                         <TextBlock Text="max"></TextBlock>
                     </ComboBox>
-                    <Button x:Name="button_solution" Content="Решить" HorizontalAlignment="Left" Margin="161,199,0,0" VerticalAlignment="Top" Width="75" Background="#FF1DAB59" Height="26" Click="button_solution_Click"/>
+                    <Button x:Name="button_solution" Content="Решить" HorizontalAlignment="Left" Margin="148,137,0,0" VerticalAlignment="Top" Width="75" Background="#FF1DAB59" Height="26" Click="button_solution_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -113,7 +113,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Folder Include="Resources\history\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
