@@ -54,7 +54,7 @@ namespace DMTGenerator
             int mainCol, mainRow; //ведущие столбец и строка
             while (!IsItEnd())
             {
-                if (count > 100)
+                if (count > 30)
                     return null;
                 mainCol = findMainCol();
                 mainRow = findMainRow(mainCol);
@@ -88,7 +88,6 @@ namespace DMTGenerator
                 table = new_table;
                 count++;
             }
-
             //заносим в result найденные значения X
             for (int i = 0; i < result.Count; i++)
             {
