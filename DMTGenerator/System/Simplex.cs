@@ -15,7 +15,7 @@ namespace DMTGenerator
  
         List<int> basis; //список базисных переменных
  
-        public Simplex(List<List<double>> source, Function func)
+        public Simplex(List<List<double>> source, Function func, Operation op, List<int> _signs = null)
         {
 
             m = source.Count; //высота
@@ -25,8 +25,24 @@ namespace DMTGenerator
             basis = new List<int>();
 
             table.AddRange(Enumerable.Repeat(default(List<double>), m));
- 
-            for (int i = 0; i < m; i++)
+
+            Random r = new Random();
+            List<int> signs;
+            if (op == Operation.Generate)
+            {
+                signs = new List<int>(4);
+                signs.Add(1);
+                signs.Add(1);
+                signs.Add(1);
+                signs.Add(1);
+            }
+            else
+            {
+                signs = _signs;
+            }
+
+
+            for (int i = 0, t = 0; i < m; i++)
             {
                 table[i] = new List<double>();
                 table[i].AddRange(Enumerable.Repeat(default(double), n + m - 1));
@@ -40,7 +56,7 @@ namespace DMTGenerator
                 //выставляем коэффициент 1 перед базисной переменной в строке
                 if ((n + i) < table[0].Count)
                 {
-                    table[i][n + i] = 1;
+                    table[i][n + i] = signs[t++];
                     basis.Add(n + i);
                 }
             }
@@ -54,7 +70,7 @@ namespace DMTGenerator
             int mainCol, mainRow; //ведущие столбец и строка
             while (!IsItEnd())
             {
-                if (count > 30)
+                if (count > 50)
                     return null;
                 mainCol = findMainCol();
                 mainRow = findMainRow(mainCol);

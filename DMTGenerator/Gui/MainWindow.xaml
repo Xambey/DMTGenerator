@@ -8,10 +8,10 @@
         Title="DMTGenerator" Height="288.112" Width="491" Background="#FF2D2D30" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="62*"/>
-            <RowDefinition Height="3*"/>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
         </Grid.RowDefinitions>
-        <Menu x:Name="menu" RenderTransformOrigin="0.496,0.295" Margin="0,-5,-0.667,192.556" Background="#FF2D2D30" FontSize="16" OpacityMask="Black" Foreground="#FFF1F1F1">
+        <Menu x:Name="menu" RenderTransformOrigin="0.496,0.295" Margin="0,-5,-0.667,193" Background="#FF2D2D30" FontSize="16" OpacityMask="Black" Foreground="#FFF1F1F1">
             <MenuItem Header="Файл" Background="#FF2D2D30" Height="30">
                 <MenuItem Header="Новый" FontSize="12" Background="#FF2D2D30"></MenuItem>
                 <MenuItem Header="Открыть" FontSize="12" Background="#FF2D2D30"></MenuItem>
@@ -23,7 +23,7 @@
             <MenuItem Header="О программе" Background="#FF2D2D30" Height="30" Click="MenuItem_Click_1">
             </MenuItem>
         </Menu>
-        <TabControl x:Name="tabControl" Margin="0,25,0.333,0" Background="#FF303434" BorderBrush="#FF303434" IsSynchronizedWithCurrentItem="False" OpacityMask="Black" FontSize="18.667" Foreground="#FFF1F1F1" Grid.RowSpan="2">
+        <TabControl x:Name="tabControl" Margin="0,25,0.333,0" Background="#FF303434" BorderBrush="#FF303434" IsSynchronizedWithCurrentItem="False" OpacityMask="Black" FontSize="18.667" Foreground="#FFF1F1F1">
             <TabItem x:Name="Generator"  Header="Генератор" ForceCursor="True" FontSize="18.667" Margin="-2,-2,-1.667,0" Background="#FF303034" BorderBrush="#FF303434" OpacityMask="Black" Foreground="Black">
                 <Grid Background="#2D2D30"  Margin="0,4,-3,-9.667" OpacityMask="Black">
                     <Grid.RowDefinitions>
@@ -99,12 +99,8 @@
                     <TextBox PreviewTextInput="tb00_PreviewTextInput" GotFocus="textBox_Click" x:Name="tb32" Text="0" FontSize="16" Grid.Column="8" Grid.Row="7" Margin="1,1,0,62" Foreground="#FFF1F1F1" Background="#FF333337" VerticalContentAlignment="Center" Grid.RowSpan="2" BorderBrush="#FF3F3F46" TabIndex="12"/>
                     <TextBox PreviewTextInput="tb00_PreviewTextInput" GotFocus="textBox_Click" x:Name="tb02" Margin="1,5,0,0.667" FontSize="16" Text="0" Grid.Column="8" Grid.RowSpan="2" Foreground="#FFF1F1F1" Background="#FF333337" VerticalContentAlignment="Center" BorderBrush="#FF3F3F46" TabIndex="3"/>
                     <TextBox PreviewTextInput="tb00_PreviewTextInput" GotFocus="textBox_Click" x:Name="tbf1" HorizontalAlignment="Left" Height="27" Margin="167,5,0,0" VerticalAlignment="Top" Width="36" Background="#FF333337" FontSize="18.667" Text="0" Grid.Column="9" Foreground="#FFF1F1F1" Grid.RowSpan="2" BorderBrush="#FF3F3F46" TabIndex="14"/>
-                    <TextBox x:Name="tba0" HorizontalAlignment="Left" Height="28" Margin="4.333,25,0,0"  VerticalAlignment="Top" Width="42" Background="#FF333337" FontSize="18.667" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="8" IsReadOnlyCaretVisible="True" IsReadOnly="True"/>
+                    <TextBox x:Name="tba0" HorizontalAlignment="Left" Height="28" Margin="24.333,24,0,0"  VerticalAlignment="Top" Width="42" Background="#FF333337" FontSize="18.667" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="8" IsReadOnlyCaretVisible="True" IsReadOnly="True"/>
                     <TextBox x:Name="tba1" HorizontalAlignment="Left" Height="28" Margin="33.667,24.667,0,0"  VerticalAlignment="Top" Width="42" Background="#FF333337" FontSize="18.667" Grid.Column="5" Grid.ColumnSpan="3" Grid.Row="8" IsReadOnlyCaretVisible="True" IsReadOnly="True"/>
-                    <TextBlock x:Name="tbf1_Copy" HorizontalAlignment="Left" Height="25"  VerticalAlignment="Top" Width="30" FontSize="18.667" Foreground="#FF09E889" Text="&lt;=" Grid.Column="7" Grid.RowSpan="2" Margin="1,4,0,0"/>
-                    <TextBlock x:Name="tbf1_Copy1" HorizontalAlignment="Left" Height="24"  VerticalAlignment="Top" Width="30" FontSize="18.667" Foreground="#FF09E889" Text="&lt;=" Grid.Column="7" Grid.Row="3" Margin="1,1,0,0"/>
-                    <TextBlock x:Name="tbf1_Copy2" HorizontalAlignment="Left" Height="24" Margin="1,0.333,0,0"  VerticalAlignment="Top" Width="30" FontSize="18.667" Foreground="#FF09E889" Text="&lt;=" Grid.Column="7" Grid.Row="5" RenderTransformOrigin="0.5,0.5"/>
-                    <TextBlock x:Name="tbf1_Copy3" HorizontalAlignment="Left" Height="27" Margin="1,0,0,0"  VerticalAlignment="Top" Width="30" FontSize="18.667" Foreground="#FF09E889" Text="&lt;=" Grid.Column="7" Grid.Row="7"/>
                     <TextBlock x:Name="tbf1_Copy7" HorizontalAlignment="Left" Margin="1.667,0.667,0,3" Width="23" FontSize="13.333" Foreground="#FF09E889" Text="X2" Padding="3,5,7,0" Grid.Column="6" Grid.Row="1" Grid.RowSpan="2"/>
                     <TextBlock x:Name="tbf1_Copy8" HorizontalAlignment="Left" Height="24"  VerticalAlignment="Top" Width="21" FontSize="13.333" Foreground="#FF09E889" Text="X1" Padding="0,5,0,0" Grid.Column="3" Margin="1,0.667,0,0" Grid.Row="1" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="tbf1_Copy9" Height="23" Margin="1,1,0.333,0"  VerticalAlignment="Top" FontSize="13.333" Foreground="#FF09E889" Text="X1" Padding="0,5,0,0" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="2"/>
@@ -122,6 +118,28 @@
                         <TextBox TabIndex="17" IsEnabled="False" Text="max"></TextBox>
                     </ComboBox>
                     <Button x:Name="button_solution" Content="Решить" Margin="1,22.667,0,0" VerticalAlignment="Top" Background="#FF252526" Height="30" Click="button_solution_Click" HorizontalAlignment="Left" Width="88" Grid.Column="8" Grid.Row="8" Foreground="#FFF1F1F1" Grid.ColumnSpan="2" TabIndex="0"/>
+                    <ComboBox x:Name="sign0" Margin="1,5,0,0.333" Grid.Column="7" Grid.RowSpan="2" HorizontalAlignment="Left" Width="31" SelectedIndex="0" RenderTransformOrigin="0.731,0.512" UseLayoutRounding="False" Padding="5,0,0,1" FontSize="21.333">
+                        <TextBlock Text="≤"/>
+                        <TextBlock Text="="/>
+                        <TextBlock Text="≥"/>
+                    </ComboBox>
+                    <ComboBox x:Name="sign1" Margin="1,1,0,4.333" Grid.Column="7" Grid.RowSpan="2" SelectedIndex="0" RenderTransformOrigin="0.731,0.512" UseLayoutRounding="False" Padding="5,0,0,1" FontSize="21.333" Grid.Row="3">
+                        <TextBlock Text="≤"/>
+                        <TextBlock Text="="/>
+                        <TextBlock Text="≥"/>
+                    </ComboBox>
+                    <ComboBox x:Name="sign2" Margin="1,0,0,0" Grid.Column="7" HorizontalAlignment="Left" Width="31" SelectedIndex="0" RenderTransformOrigin="0.731,0.512" UseLayoutRounding="False" Padding="5,0,0,1" FontSize="21.333" Grid.Row="5">
+                        <TextBlock Text="≤"/>
+                        <TextBlock Text="="/>
+                        <TextBlock Text="≥"/>
+                    </ComboBox>
+                    <ComboBox x:Name="sign3" Margin="1,0,0,0" Grid.Column="7" HorizontalAlignment="Left" Width="31" SelectedIndex="0" RenderTransformOrigin="0.731,0.512" UseLayoutRounding="False" Padding="5,0,0,1" FontSize="21.333" Grid.Row="7">
+                        <TextBlock Text="≤"/>
+                        <TextBlock Text="="/>
+                        <TextBlock Text="≥"/>
+                    </ComboBox>
+                    <TextBlock x:Name="tbf1_Copy" HorizontalAlignment="Left" Height="23" Margin="3.333,26,0,0"  VerticalAlignment="Top" Width="21" FontSize="13.333" Foreground="#FF09E889" Text="X1" Padding="0,5,0,0" Grid.Column="1" Grid.Row="8"/>
+                    <TextBlock x:Name="tbf1_Copy1" HorizontalAlignment="Left" Height="23" Margin="14.667,26,0,0"  VerticalAlignment="Top" Width="21" FontSize="13.333" Foreground="#FF09E889" Text="X2" Padding="0,5,0,0" Grid.Column="5" Grid.Row="8"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -73,9 +73,9 @@
       <DependentUpon>AboutProgram.xaml</DependentUpon>
     </Compile>
     <Compile Include="Method\Function.cs" />
-    <Compile Include="System\Generator.cs" />
+    <Compile Include="Method\Operation.cs" />
     <Compile Include="Method\Method.cs" />
-    <Compile Include="Method\Simplex.cs" />
+    <Compile Include="System\Simplex.cs" />
     <Page Include="Gui\AboutProgram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

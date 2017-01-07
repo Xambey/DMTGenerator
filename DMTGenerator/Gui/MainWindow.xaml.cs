@@ -208,6 +208,19 @@ namespace DMTGenerator
             }
         }
 
+        private int Sign(string text)
+        {
+            switch (text)
+            {
+                case "≤":
+                    return 1;
+                case "≥":
+                    return -1;
+                default:
+                    return 0;
+            }
+        }
+
         private void button_solution_Click(object sender, RoutedEventArgs e)
         {
             tblist = new List<List<TextBox>>();
@@ -242,6 +255,13 @@ namespace DMTGenerator
                 tbf1
             });
 
+            List<int> signs = new List<int>(4);
+
+            signs.Add(Sign(sign0.Text));
+            signs.Add(Sign(sign1.Text));
+            signs.Add(Sign(sign2.Text));
+            signs.Add(Sign(sign3.Text));
+
             if (tblist.Any(s => s.Any(a => string.IsNullOrEmpty(a.Text))))
             {
                 MessageBox.Show("Все поля должны быть заполнены!", "Ошибка!", MessageBoxButton.OK);
@@ -259,7 +279,7 @@ namespace DMTGenerator
             if (f == Function.Max)
                 changeSign(ref m);
 
-            Simplex S = new Simplex(m, f);
+            Simplex S = new Simplex(m, f, Operation.Decide, signs);
             var table_result = S.Calculate(ref result);
 
             if (table_result == null)
@@ -284,13 +304,6 @@ namespace DMTGenerator
         {
             while (true)
             {
-                //Проверка: в канонической ли форме задача?
-                List<int> signs = new List<int>();
-                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
-                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
-                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
-                signs.Add((r.Next() % 2 == 0) ? -1 : 1);
-
                 List<List<double>> table = new List<List<double>>()
                 {
                      new List<double>() { r.Next(-15, 15), r.Next(-15, 15), r.Next(-15, 15)},
@@ -360,13 +373,13 @@ namespace DMTGenerator
                 if (!flag || !nnull)
                     continue;
 
-                Simplex S = new Simplex(table, f);
+                Simplex S = new Simplex(table, f, Operation.Generate);
                 table_result = S.Calculate(ref result);
 
                 if (table_result == null)
                     continue;
 
-                if (result[0] != (int)result[0] || result[1] != (int)result[1] || result[0] == 0 || result[1] == 0)
+                if (result[0] != (int)result[0] || result[1] != (int)result[1] || result[0] == 0 || result[1] == 0 || result[0] < -30 || result[0] > 30 || result[1] < -30 || result[1] > 30)
                     continue;
                 
                 string sign = fr == Function.Max ? ">=" : "<=";
